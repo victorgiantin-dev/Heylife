@@ -506,18 +506,23 @@ class StorageService {
   }
 
   // Current Logged In User
-  getCurrentUserId(): string {
-    return localStorage.getItem(CURRENT_USER_KEY) || 'usr_adm_1';
+  getCurrentUserId(): string | null {
+    return localStorage.getItem(CURRENT_USER_KEY);
   }
 
-  setCurrentUserId(id: string): void {
-    localStorage.setItem(CURRENT_USER_KEY, id);
+  setCurrentUserId(id: string | null): void {
+    if (id) {
+      localStorage.setItem(CURRENT_USER_KEY, id);
+    } else {
+      localStorage.removeItem(CURRENT_USER_KEY);
+    }
   }
 
-  getCurrentUser(): User {
+  getCurrentUser(): User | null {
     const currentId = this.getCurrentUserId();
+    if (!currentId) return null;
     const users = this.getUsers();
-    return users.find(u => u.id === currentId) || users[0];
+    return users.find(u => u.id === currentId) || null;
   }
 
   // Requests

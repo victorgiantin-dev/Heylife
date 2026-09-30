@@ -677,11 +677,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 space-y-1">
+              <div className="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 space-y-1.5">
                 <span className="font-semibold text-slate-200">Como aplicar no Supabase:</span>
                 <p>1. Acesse o console do seu projeto no Supabase (supabase.com).</p>
                 <p>2. Clique em <strong>SQL Editor</strong> na barra lateral esquerda.</p>
                 <p>3. Clique em <strong>New Query</strong>, cole o script acima e clique em <strong>Run</strong>.</p>
+                <div className="mt-2 p-2 bg-emerald-950/60 border border-emerald-800/60 rounded text-[10px] text-emerald-300">
+                  <strong>Dica de compatibilidade:</strong> O script acima contém limpeza preventiva (<code className="font-mono text-emerald-200">DROP CASCADE</code>) para substituir com segurança qualquer tabela anterior do Supabase que tenha sido criada com <code className="font-mono text-emerald-200">id UUID</code>, garantindo tipos compatíveis (<code className="font-mono text-emerald-200">TEXT</code>) para as chaves estrangeiras.
+                </div>
               </div>
             </div>
 

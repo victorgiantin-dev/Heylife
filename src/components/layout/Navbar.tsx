@@ -264,81 +264,120 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </button>
 
-            {/* User Dropdown / Switch Profile Menu */}
-            <div className="relative">
-              <button
-                onClick={() => setShowUserDropdown(!showUserDropdown)}
-                className="flex items-center gap-2 p-1.5 pl-2.5 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all text-left"
-              >
-                <div className="w-8 h-8 rounded-lg bg-sky-600 text-white font-semibold flex items-center justify-center text-xs">
-                  {currentUser.avatarInitials || currentUser.name.slice(0, 2).toUpperCase()}
-                </div>
-                <div className="hidden sm:block">
-                  <div className="text-xs font-semibold text-slate-800 leading-tight truncate max-w-[130px]">
-                    {currentUser.name}
+            {/* User Profile / Switch Profile Menu: Only ADM can switch profiles */}
+            {currentUser.role === 'adm' ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserDropdown(!showUserDropdown)}
+                  className="flex items-center gap-2 p-1.5 pl-2.5 rounded-xl border border-purple-200 hover:border-purple-300 hover:bg-purple-50/50 transition-all text-left bg-white"
+                  title="Painel de Administrador - Clique para trocar perfil ou sair"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-purple-700 text-white font-semibold flex items-center justify-center text-xs shadow-xs">
+                    {currentUser.avatarInitials || currentUser.name.slice(0, 2).toUpperCase()}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span className={`text-[10px] font-medium px-1.5 py-0.2 rounded border ${getRoleColor(currentUser.role)}`}>
-                      {getRoleLabel(currentUser.role)}
-                    </span>
+                  <div className="hidden sm:block">
+                    <div className="text-xs font-semibold text-slate-800 leading-tight truncate max-w-[130px]">
+                      {currentUser.name}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className={`text-[10px] font-medium px-1.5 py-0.2 rounded border ${getRoleColor(currentUser.role)}`}>
+                        {getRoleLabel(currentUser.role)}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <ChevronDown className="w-4 h-4 text-slate-400" />
-              </button>
+                  <ChevronDown className="w-4 h-4 text-slate-400" />
+                </button>
 
-              {showUserDropdown && (
-                <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in zoom-in-95">
-                  <div className="px-4 py-2 border-b border-slate-100">
-                    <p className="text-xs font-semibold text-slate-900">{currentUser.name}</p>
-                    <p className="text-[11px] text-slate-500 truncate">{currentUser.email}</p>
-                    <p className="text-[11px] text-sky-700 mt-0.5">{currentUser.jobTitle}</p>
-                    <p className="text-[10px] text-slate-400">{currentUser.department}</p>
-                  </div>
+                {showUserDropdown && (
+                  <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in zoom-in-95">
+                    <div className="px-4 py-2 border-b border-slate-100">
+                      <p className="text-xs font-semibold text-slate-900">{currentUser.name}</p>
+                      <p className="text-[11px] text-slate-500 truncate">{currentUser.email}</p>
+                      <p className="text-[11px] text-purple-700 mt-0.5 font-medium">{currentUser.jobTitle}</p>
+                      <p className="text-[10px] text-slate-400">{currentUser.department}</p>
+                    </div>
 
-                  <div className="px-3 py-1.5 bg-slate-50 border-b border-slate-100">
-                    <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
-                      Alternar Perfil Clínico (Demonstração)
-                    </p>
-                  </div>
+                    <div className="px-3 py-1.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                      <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                        Trocar Perfil (Exclusivo ADM)
+                      </p>
+                      <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
+                    </div>
 
-                  <div className="max-h-56 overflow-y-auto py-1">
-                    {allUsers.map((u) => (
+                    <div className="max-h-56 overflow-y-auto py-1">
+                      {allUsers.map((u) => (
+                        <button
+                          key={u.id}
+                          onClick={() => {
+                            onSelectUser(u);
+                            setShowUserDropdown(false);
+                          }}
+                          className={`w-full px-4 py-2 text-left text-xs flex items-center justify-between hover:bg-slate-50 transition-colors ${
+                            u.id === currentUser.id ? 'bg-purple-50/70 font-semibold text-purple-900' : ''
+                          }`}
+                        >
+                          <div className="truncate pr-2">
+                            <p className="text-slate-800 truncate">{u.name}</p>
+                            <p className="text-[10px] text-slate-500">{u.jobTitle}</p>
+                          </div>
+                          <span className={`text-[9px] px-1.5 py-0.5 rounded border whitespace-nowrap ${getRoleColor(u.role)}`}>
+                            {getRoleLabel(u.role)}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-100 px-2">
                       <button
-                        key={u.id}
                         onClick={() => {
-                          onSelectUser(u);
                           setShowUserDropdown(false);
+                          onLogout();
                         }}
-                        className={`w-full px-4 py-2 text-left text-xs flex items-center justify-between hover:bg-slate-50 transition-colors ${
-                          u.id === currentUser.id ? 'bg-sky-50/70 font-semibold' : ''
-                        }`}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       >
-                        <div className="truncate pr-2">
-                          <p className="text-slate-800 truncate">{u.name}</p>
-                          <p className="text-[10px] text-slate-500">{u.jobTitle}</p>
-                        </div>
-                        <span className={`text-[9px] px-1.5 py-0.5 rounded border whitespace-nowrap ${getRoleColor(u.role)}`}>
-                          {getRoleLabel(u.role)}
-                        </span>
+                        <LogOut className="w-4 h-4" />
+                        Encerrar Sessão
                       </button>
-                    ))}
+                    </div>
                   </div>
-
-                  <div className="pt-2 border-t border-slate-100 px-2">
-                    <button
-                      onClick={() => {
-                        setShowUserDropdown(false);
-                        onLogout();
-                      }}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Encerrar Sessão
-                    </button>
+                )}
+              </div>
+            ) : (
+              /* Non-ADM: RH, Supervisor, Funcionário do NOT have the button to switch profile */
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 p-1.5 pl-2.5 rounded-xl border border-slate-200 bg-slate-50/60 text-left">
+                  <div className={`w-8 h-8 rounded-lg text-white font-semibold flex items-center justify-center text-xs shadow-xs ${
+                    currentUser.role === 'rh' 
+                      ? 'bg-amber-600' 
+                      : currentUser.role === 'supervisor' 
+                        ? 'bg-emerald-600' 
+                        : 'bg-sky-600'
+                  }`}>
+                    {currentUser.avatarInitials || currentUser.name.slice(0, 2).toUpperCase()}
+                  </div>
+                  <div className="hidden sm:block pr-1">
+                    <div className="text-xs font-semibold text-slate-800 leading-tight truncate max-w-[130px]">
+                      {currentUser.name}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className={`text-[10px] font-medium px-1.5 py-0.2 rounded border ${getRoleColor(currentUser.role)}`}>
+                        {getRoleLabel(currentUser.role)}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
+
+                {/* Direct Logout Button */}
+                <button
+                  onClick={onLogout}
+                  className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-xl transition-all"
+                  title="Encerrar Sessão e Voltar para a Tela de Login"
+                >
+                  <LogOut className="w-4 h-4 text-slate-400 group-hover:text-red-500" />
+                  <span className="hidden sm:inline">Sair</span>
+                </button>
+              </div>
+            )}
 
           </div>
 

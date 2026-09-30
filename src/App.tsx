@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { User, Role } from './types';
 import { storage } from './services/storageService';
 import { Navbar } from './components/layout/Navbar';
@@ -15,23 +15,13 @@ import { AdminDashboard } from './components/dashboard/AdminDashboard';
 import { NotificationsModal } from './components/common/NotificationsModal';
 
 export default function App() {
+  // Always start at LoginScreen as requested:
+  // "a tela inicial tem que ser a tela de login , so depois de colocar as credenciais ou usar o acesso rapido para ver o conteudo"
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [activeTab, setActiveTab] = useState<string>('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [, setRefreshKey] = useState(0);
-
-  // Initialize from storage
-  useEffect(() => {
-    const currentId = storage.getCurrentUserId();
-    const users = storage.getUsers();
-    const user = users.find(u => u.id === currentId);
-    if (user) {
-      setCurrentUser(user);
-      setIsLoggedIn(true);
-      setDefaultTabForRole(user.role);
-    }
-  }, []);
 
   const setDefaultTabForRole = (role: Role) => {
     switch (role) {
@@ -58,6 +48,7 @@ export default function App() {
   };
 
   const handleLogout = () => {
+    storage.setCurrentUserId(null);
     setIsLoggedIn(false);
     setCurrentUser(null);
   };
