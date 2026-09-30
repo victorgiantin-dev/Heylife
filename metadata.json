@@ -1,0 +1,6 @@
+{
+  "name": "HeyLife - Gestão Hospitalar de Férias",
+  "description": "Sistema integrado de solicitação, aprovação clínica, agendamento de pagamentos e gestão de férias para equipes hospitalares HeyLife.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
